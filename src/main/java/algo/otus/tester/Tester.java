@@ -53,6 +53,10 @@ public class Tester {
     }
 
     public boolean testLongInOut(Function<Long, Long> function) {
+        return testLongInOut(function, 0);
+    }
+
+    public boolean testLongInOut(Function<Long, Long> function, int index) {
         try (Stream<Path> filePathStream = Files.walk(Paths.get(path))) {
             return !filePathStream
                     .filter(Files::isRegularFile)
@@ -63,7 +67,7 @@ public class Tester {
                         List<Path> list = entry.getValue();
                         String key = entry.getKey();
                         Long in = list.stream().filter(p -> p.toString().endsWith("in")).map(this::readLongValue).findFirst().get();
-                        Long out = list.stream().filter(p -> p.toString().endsWith("out")).map(this::readLongValue).findFirst().get();
+                        Long out = list.stream().filter(p -> p.toString().endsWith("out")).map(p -> readLongValue(p, index)).findFirst().get();
                         long timeMillis = System.currentTimeMillis();
                         Long result = function.apply(in);
                         long resultTime = System.currentTimeMillis() - timeMillis;
@@ -137,6 +141,15 @@ public class Tester {
             System.out.println("Ошибка ввода/вывода. Завершение работы тестов...");
         }
         return false;
+    }
+
+    private Long readLongValue(Path path, int index) {
+        try {
+            String value = Files.readAllLines(path).get(index).trim();
+            return Long.valueOf(value);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка ввода/вывода. Невозможно прочитать значение");
+        }
     }
 
     private Long readLongValue(Path path) {
