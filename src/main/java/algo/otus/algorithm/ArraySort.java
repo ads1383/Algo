@@ -76,6 +76,42 @@ public class ArraySort {
         }
     }
 
+    public void quickSort() {
+        quickSort(0, array.length - 1);
+    }
+
+    public void mergeSort() {
+        mergeSort(0, array.length - 1);
+    }
+
+    private void mergeSort(int left, int right) {
+        if(left >= right) return;
+        int middle = (left + right) / 2;
+        mergeSort(left, middle);
+        mergeSort(middle + 1, right);
+        merge(left, middle, right);
+    }
+
+    private void merge(int left, int middle, int right) {
+        int[] t = new int[right - left + 1];
+        int a = left;
+        int b = middle + 1;
+        int m = 0;
+        while(a <= middle && b <= right) {
+            if(more(array[a], array[b])) {
+                t[m++] = array[b++];
+            } else {
+                t[m++] = array[a++];
+            }
+        }
+        while (a <= middle) t[m++] = array[a++];
+        while (b <= right) t[m++] = array[b++];
+        for (int i = left; i <= right ; i++) {
+            array[i] = t[i - left];
+        }
+        asg += 2 * (right - left + 1);
+    }
+
     public void selectionSort() {
         for (int j = array.length; j > 0 ; j--) {
             swap(findMax(j), j - 1);
@@ -92,17 +128,6 @@ public class ArraySort {
             swap(0, j);
             heapify(0, j);
         }
-    }
-
-    private void heapify(int root, int size) {
-        int x = root;
-        int left = 2 * x + 1;
-        int right = 2 * x + 2;
-        if(more(size, left) && more(array[left], array[x])) x = left;
-        if(more(size, right) && more(array[right], array[x])) x = right;
-        if(x == root) return;
-        swap(root, x);
-        heapify(x, size);
     }
 
     public void setSortedArray() {
@@ -132,6 +157,35 @@ public class ArraySort {
                 "time = " + ms + " ms");
     }
 
+    private void quickSort(int left, int right) {
+        if(left >= right) return;
+        int m = split(left, right);
+        quickSort(left, m - 1);
+        quickSort(m + 1, right);
+    }
+
+    private int split(int left, int right) {
+        int p = array[right];
+        int m = left - 1;
+        for (int j = left; j <= right; j++) {
+            if(moreOrEq(p, array[j])) {
+                swap(++m, j);
+            }
+        }
+        return m;
+    }
+
+    private void heapify(int root, int size) {
+        int x = root;
+        int left = 2 * x + 1;
+        int right = 2 * x + 2;
+        if(more(size, left) && more(array[left], array[x])) x = left;
+        if(more(size, right) && more(array[right], array[x])) x = right;
+        if(x == root) return;
+        swap(root, x);
+        heapify(x, size);
+    }
+
     private void swap(int i, int j) {
         asg += 3;
         int buffer = array[i];
@@ -142,6 +196,11 @@ public class ArraySort {
     private boolean more(int x, int y) {
         cmp++;
         return x > y;
+    }
+
+    private boolean moreOrEq(int x, int y) {
+        cmp++;
+        return x >= y;
     }
 
     private int binarySearch(int key, int low, int high) {

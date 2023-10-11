@@ -7,7 +7,7 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) {
-        for (int n = 100; n < 10001; n *= 10) {
+        for (int n = 100; n < 1000001; n *= 10) {
             int[] array = new int[n];
             Random random = new Random();
             for (int i = 0; i < n; i++) {
@@ -17,7 +17,7 @@ public class Main {
 //            simpleSort.setSortedArray();
 //            simpleSort.setReversed();
             long start = System.currentTimeMillis();
-            arraySort.heapSort();
+            arraySort.mergeSort();
             long ms = System.currentTimeMillis() - start;
             arraySort.print(ms);
         }
