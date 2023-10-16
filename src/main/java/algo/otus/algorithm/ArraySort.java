@@ -157,6 +157,10 @@ public class ArraySort {
                 "time = " + ms + " ms");
     }
 
+    public void print(long ms, int count) {
+        System.out.println("Размер массива = " + count + ",\ncmp = " + this.cmp + "\nasg = " + this.asg + "\ntime = " + ms + " ms");
+    }
+
     private void quickSort(int left, int right) {
         if(left >= right) return;
         int m = split(left, right);
