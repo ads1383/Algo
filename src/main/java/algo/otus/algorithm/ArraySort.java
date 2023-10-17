@@ -84,6 +84,119 @@ public class ArraySort {
         mergeSort(0, array.length - 1);
     }
 
+    public void bucketSort() {
+        int max = findMax();
+        max++;
+        int n = array.length;
+        ListBucket[] buckets = new ListBucket[n];
+        for (int value: array) {
+            int nr = (int) (((long) value * (long) n) / (long) max);
+            buckets[nr] = new ListBucket(value, buckets[nr]);
+            ListBucket item = buckets[nr];
+            while (item.next != null) {
+                if(moreOrEq(item.next.value, item.value)) {
+                    break;
+                }
+                asg += 3;
+                int x = item.value;
+                item.value = item.next.value;
+                item.next.value = x;
+            }
+        }
+        int j = 0;
+        for(ListBucket item : buckets) {
+            while(item != null) {
+                asg += 2;
+                array[j++] = item.value;
+                item = item.next;
+            }
+        }
+    }
+
+    class ListBucket {
+        public int value;
+        public ListBucket next;
+
+        public ListBucket(int value, ListBucket next) {
+            this.value = value;
+            this.next = next;
+        }
+    }
+
+    public void countingSort() {
+        int[] counts = countElements(array, findMax());
+        int[] sorted = new int[array.length];
+        for (int i = array.length - 1; i >= 0; i--) {
+            asg += 3;
+            int current = array[i];
+            sorted[counts[current] - 1] = current;
+            counts[current] -= 1;
+        }
+        asg++;
+        array = sorted;
+    }
+
+    public void radixSort() {
+        int maximumNumber = findMax();
+        int numberOfDigits = calculateNumberOfDigitsIn(maximumNumber);
+        int placeValue = 1;
+        while (numberOfDigits-- > 0) {
+            applyCountingSortOn(placeValue);
+            placeValue *= 10;
+        }
+    }
+
+    private void applyCountingSortOn(int placeValue) {
+        int range = 10; // decimal system, numbers from 0-9
+        int[] frequency = new int[range];
+        for (int num : array) {
+            int digit = (num / placeValue) % range;
+            asg++;
+            frequency[digit]++;
+        }
+        for (int i = 1; i < range; i++) {
+            asg++;
+            frequency[i] += frequency[i - 1];
+        }
+        int[] sortedValues = new int[array.length];
+        for (int i = array.length - 1; i >= 0; i--) {
+            asg += 2;
+            int digit = (array[i] / placeValue) % range;
+            sortedValues[frequency[digit] - 1] = array[i];
+            frequency[digit]--;
+        }
+        asg++;
+        array = sortedValues;
+    }
+
+    private int calculateNumberOfDigitsIn(int number) {
+        return (int) (Math.log10(number) + 1);
+    }
+
+    private int[] countElements(int[] input, int k) {
+        int[] c = new int[k + 1];
+        for (int i : input) {
+            asg++;
+            c[i] += 1;
+        }
+        for (int i = 1; i < c.length; i++) {
+            asg++;
+            c[i] += c[i - 1];
+        }
+        return c;
+    }
+
+    private int findMax() {
+        int max = array[0];
+        for (int value: array) {
+            if(more(value, max)) {
+               asg++;
+               max = value;
+            }
+        }
+        return max;
+    }
+
     private void mergeSort(int left, int right) {
         if(left >= right) return;
         int middle = (left + right) / 2;
