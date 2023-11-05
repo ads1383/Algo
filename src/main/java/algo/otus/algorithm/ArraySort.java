@@ -13,8 +13,31 @@ public class ArraySort {
     //Присваисания
     private int asg = 0;
 
+    private BinarySearchTree binarySearchTree;
+
+    private int bstIndex;
+
     public ArraySort(int[] array) {
         this.array = array;
+    }
+
+    public void binarySearchTreeSort() {
+        BinarySearchTree binarySearchTree = new BinarySearchTree();
+        for(int elem : array) {
+            binarySearchTree.add(elem);
+        }
+        this.binarySearchTree = binarySearchTree;
+        this.bstIndex = 0;
+        dfs(binarySearchTree.getRoot());
+    }
+
+    private void dfs(TreeExampleNode node) {
+        if(node == null) return;
+        dfs(node.getLeft());
+        for (int i = 0; i < node.getCount(); i++) {
+            array[bstIndex++] = node.getKey();
+        }
+        dfs(node.getRight());
     }
 
     public void bubbleSort() {
